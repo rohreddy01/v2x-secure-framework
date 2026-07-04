@@ -1,32 +1,29 @@
 """
 Data Logger — saves every V2X BSM to CSV with ground truth labels.
-One CSV file per simulation run, named by timestamp and attack type.
+One CSV file per simulation run, named by timestamp, scenario, and attack type.
 """
-
 import csv
 import os
 import time
 
 FIELDS = [
-    "timestamp", "instance", "vehicle_id",
+    "timestamp", "instance", "scenario", "vehicle_id",
     "pos_x", "pos_y", "pos_z",
     "speed_kmh", "heading", "intent",
     "is_attack", "attack_type"
 ]
 
 class DataLogger:
-    def __init__(self, instance_id, attack_type="none", output_dir="~/v2x_data"):
-        self.instance_id  = instance_id
-        self.attack_type  = attack_type
-        self.msg_count    = 0
-
+    def __init__(self, instance_id, attack_type="none", scenario="unknown", output_dir="~/v2x_data"):
+        self.instance_id = instance_id
+        self.attack_type = attack_type
+        self.scenario    = scenario
+        self.msg_count   = 0
         output_dir = os.path.expanduser(output_dir)
         os.makedirs(output_dir, exist_ok=True)
-
         run_time  = time.strftime("%Y%m%d_%H%M%S")
-        filename  = f"v2x_{instance_id}_{attack_type}_{run_time}.csv"
+        filename  = f"v2x_{instance_id}_{scenario}_{attack_type}_{run_time}.csv"
         self.path = os.path.join(output_dir, filename)
-
         self._file   = open(self.path, "w", newline="")
         self._writer = csv.DictWriter(self._file, fieldnames=FIELDS)
         self._writer.writeheader()
@@ -37,6 +34,7 @@ class DataLogger:
             row = {
                 "timestamp"  : msg.get("timestamp", time.time()),
                 "instance"   : msg.get("instance", ""),
+                "scenario"   : self.scenario,
                 "vehicle_id" : msg.get("vehicle_id", ""),
                 "pos_x"      : msg.get("position", {}).get("x", 0),
                 "pos_y"      : msg.get("position", {}).get("y", 0),
