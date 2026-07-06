@@ -582,7 +582,7 @@ class ScenarioManager:
 
         return bg_list
 
-    def spawn_vehicle_by_range(self, tm, traffic_config, bg_list):
+    def spawn_vehicle_by_range(self, tm, traffic_config, bg_list, tm_port=8000):
         """
         Spawn the traffic vehicles by the given range.
 
@@ -730,7 +730,7 @@ class ScenarioManager:
                                                   bg_list, tm_port)
 
         else:
-            bg_list = self.spawn_vehicle_by_range(tm, traffic_config, bg_list)
+            bg_list = self.spawn_vehicle_by_range(tm, traffic_config, bg_list, tm_port)
 
         print('CARLA traffic flow generated.')
         return tm, bg_list

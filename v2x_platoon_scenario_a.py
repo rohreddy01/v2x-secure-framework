@@ -12,6 +12,7 @@ import sys
 import os
 import argparse
 import carla
+import time
 
 sys.path.insert(0, '/home/umd-user')
 
@@ -34,6 +35,8 @@ def on_v2x_receive(msg):
     px         = msg["position"]["x"]
     py         = msg["position"]["y"]
     received_v2x.append(msg)
+    latency_ms = (time.time() - msg.get("timestamp", time.time())) * 1000
+    print(f"[LATENCY] {latency_ms:.1f} ms")
     print(f"[V2X-A] << From Instance-{inst}: Vehicle {vid} | speed={spd:.1f}km/h | intent={intent_str} | pos=({px:.1f}, {py:.1f})")
 
 
